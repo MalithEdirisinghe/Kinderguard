@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ToastAndroid, Button, ScrollView } from 'react-native';
-import { auth, db, app } from './firebase';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ToastAndroid, Button, ScrollView, ActivityIndicator } from 'react-native';
+import { auth, firestore, app, db } from './firebase';
 import { createUserWithEmailAndPassword, updateProfile, AuthErrorCodes } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getStorage } from 'firebase/storage';
@@ -15,11 +15,13 @@ export default function SignupScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
-    const [imageUri, setImageUri] = useState(null);
+    const [imageUri, setImageUri] = useState(null); 
+    const [loading, setLoading] = useState(false);
 
     const handleSignup = async () => {
-        if (!email || !Volunteer || !Contact || !username || !password || !confirmPassword) {
+        if (!email || !Volunteer || !Contact || !username || !name || !password || !confirmPassword) {
             const value = 'Please fill in all fields.';
             ToastAndroid.showWithGravityAndOffset(
                 value,
@@ -38,6 +40,12 @@ export default function SignupScreen({ navigation }) {
                 50
             );
         } else {
+            if (loading) {
+                return; // Prevent multiple sign-up attempts while already loading
+            }
+
+            // Set loading to true at the beginning of the signup process
+            setLoading(true);
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -52,6 +60,7 @@ export default function SignupScreen({ navigation }) {
                 email: user.email,
                 volunteerID: Volunteer,
                 contactNumber: Contact,
+                name: name,
             };
 
             const docRef = doc(db, 'users', user.uid);
@@ -86,6 +95,7 @@ export default function SignupScreen({ navigation }) {
 
             const userLocationData = {
                 userId: user.uid, // Use the user's UID as the userId
+                userUsername: user.displayName,
                 userLat: '8.60874742441555', // Replace with the actual latitude
                 userLong: '80.5377715276729', // Replace with the actual longitude
             };
@@ -105,7 +115,9 @@ export default function SignupScreen({ navigation }) {
             } else {
                 console.error('Failed to save user location.');
             }
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
                 const value = 'Email is already in use. Please use a different email.';
                 ToastAndroid.showWithGravityAndOffset(
@@ -180,16 +192,22 @@ export default function SignupScreen({ navigation }) {
             />
             <TextInput
                 style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={(text) => setName(text)}
+            />
+            <TextInput
+                style={styles.input}
                 placeholder="Contact Number"
                 value={Contact}
                 onChangeText={(Number) => setContact(Number)}
                 keyboardType="number-pad"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
             />
             <TextInput
                 style={styles.input}
@@ -205,8 +223,12 @@ export default function SignupScreen({ navigation }) {
                 value={confirmPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
             />
-            <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
-                <Text style={styles.signupButtonText}>Sign Up</Text>
+            <TouchableOpacity style={styles.signupButton} onPress={handleSignup} disabled={loading}>
+                {loading ? (
+                    <ActivityIndicator size="small" color="white" />
+                ) : (
+                    <Text style={styles.signupButtonText}>Sign Up</Text>
+                )}
             </TouchableOpacity>
             <TouchableOpacity style={styles.loginLink} onPress={handleLogin}>
                 <Text style={styles.loginLinkText}>Already have an account? Login</Text>

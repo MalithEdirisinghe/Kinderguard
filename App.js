@@ -5,14 +5,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapScreen from './MapScreen';
 import SignupScreen from './SignupScreens';
+import ProfileScreen from './UpdateProfileScreen';
 import LoginScreen from './LoginScreen';
 import NotificationScreen from './NotificationScreen';
 import DirectionScreen from './Direction';
 import HomeScreen from './HomeScreen';
 import SplashScreen from './SplashScreen';
+import NotifyScreen from './notify';
+import UpdateProfileScreen from './UpdateProfileScreen';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+
+
+
 
 const App = () => {
 
@@ -40,11 +48,22 @@ const App = () => {
           headerShown: false,
           headerLeft: null, // Remove the back button
         })} />
-      <Tab.Screen name="Notification" component={NotificationScreen}
+        <Tab.Screen name="Notification" component={NotificationScreen}
         options={() => ({
           tabBarIcon: () => (
             <Image
               source={require("./assets/VectorNotification.png")}
+              style={{ width: 24, height: 24 }}
+            />
+          ),
+          headerShown: false,
+          headerLeft: null, // Remove the back button
+        })} />
+      <Tab.Screen name="Profile" component={UpdateProfileScreen}
+        options={() => ({
+          tabBarIcon: () => (
+            <Image
+              source={require("./assets/profile.png")}
               style={{ width: 24, height: 24 }}
             />
           ),
@@ -68,6 +87,11 @@ const App = () => {
             headerShown: false,
             headerLeft: null, // Remove the back button
           })} />
+        {/* <Stack.Screen name="Profile" component={ProfileScreen}
+          options={() => ({
+            headerShown: false,
+            headerLeft: null, // Remove the back button
+          })} /> */}
         <Stack.Screen name="Login" component={LoginScreen}
           options={() => ({
             headerShown: false,
