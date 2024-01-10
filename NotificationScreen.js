@@ -123,7 +123,7 @@ const NotificationScreen = () => {
     const showPushNotification = async (message) => {
         await scheduleNotificationAsync({
             content: {
-                title: 'New Notification',
+                title: 'New Case',
                 body: message,
             },
             trigger: null,
