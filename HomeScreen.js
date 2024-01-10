@@ -191,7 +191,7 @@ const HomeScreen = ({ navigation }) => {
                 .catch((error) => {
                     console.error('Error fetching user location:', error);
                 });
-        }, 1000); // Update location every 1 seconds
+        }, 5000); // Update location every 1 seconds
 
         return () => {
             clearInterval(locationUpdateInterval);

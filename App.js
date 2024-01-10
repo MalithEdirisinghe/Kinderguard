@@ -5,14 +5,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapScreen from './MapScreen';
 import SignupScreen from './SignupScreens';
-import ProfileScreen from './UpdateProfileScreen';
 import LoginScreen from './LoginScreen';
 import NotificationScreen from './NotificationScreen';
-import DirectionScreen from './Direction';
 import HomeScreen from './HomeScreen';
 import SplashScreen from './SplashScreen';
-import NotifyScreen from './notify';
 import UpdateProfileScreen from './UpdateProfileScreen';
+import NotifyScreen from './notify';
 
 
 const Tab = createBottomTabNavigator();
