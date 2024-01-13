@@ -101,7 +101,7 @@ export default function SignupScreen({ navigation }) {
             };
 
             // Make a POST request to save the user's location
-            const apiUrl = 'https://tame-undershirt-ant.cyclic.app/api/saveUser';
+            const apiUrl = 'https://kids-app.adaptable.app/api/saveUser';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
