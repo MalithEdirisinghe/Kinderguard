@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, Alert, ActivityIndicator } from 'react-native';
 import { auth } from './firebase';
 import { scheduleNotificationAsync } from 'expo-notifications';
-import SocketIOClient from 'socket.io-client';
+import SocketIOClient from 'socket.io-client'; 
 import axios from 'axios';
 import { Base_url } from './common/baseUrl';
 
@@ -12,7 +12,7 @@ const NotificationScreen = () => {
     const [lastResponseTime, setLastResponseTime] = useState(null);
     const [loading, setLoading] = useState(false);
     // Function to clear old notifications
-
+    
     // const clearOldNotifications = () => {
     //     const now = new Date();
     //     const oneDayAgo = new Date(now);
@@ -49,7 +49,7 @@ const NotificationScreen = () => {
 
                         try {
                             // Make a PATCH request to the API endpoint
-                            const response = await axios.patch(Base_url + '/api/updateIsActive', data);
+                            const response = await axios.patch(Base_url+'/api/updateIsActive', data);
 
                             // Check if the request was successful
                             if (response.status === 200) {
@@ -81,65 +81,48 @@ const NotificationScreen = () => {
     }, [userId, fetchNotifications]);
 
 
-
+    
     const socket = SocketIOClient("wss://kids-app.adaptable.app", {
-        reconnection: true, // Enable automatic reconnection
-        reconnectionAttempts: 5, // Specify the number of reconnection attempts
-        // Add other options if needed
+        reconnection: true,
+        reconnectionAttempts: 5, 
     });
+    useEffect(()=>{
 
-    useEffect(() => {
-        fetchNotifications();
-        socket.on("connect", () => {
-            fetchNotifications();
-            console.log("Connected to server");
+
+        socket.on('connect', () => {
+            console.log('Connecteds to server');
         });
 
-        socket.on("disconnect", () => {
-            fetchNotifications();
-            console.log("Disconnected from server");
+        socket.on('disconnect', () => {
+            console.log('Disconnecteds from server');
         });
 
-        socket.on("getLocation", (data) => {
+        socket.on('getLocation', (data) => {
             console.log("Incoming data", data);
         });
 
-        return () => {
-            // Cleanup when component unmounts
-            socket.disconnect();
-        };
-    }, []);
+    });
 
     const sendRequestID = (ID) => {
-        socket.emit("getLocation", ID);
-    };
-
-    const fetchNotifications = () => {
+        socket.emit('getLocation', ID);
+    }
+    const fetchNotifications =()=>{
         const data = { requestID: userId };
         sendRequestID(data);
 
-        socket.on("getLocation", (data) => {
+        socket.on('getLocation', (data) => {
             const latestNotifications = data.slice(-9);
             setNotifications(latestNotifications);
-            const latestNotification =
-                latestNotifications.length > 0
-                    ? latestNotifications[latestNotifications.length - 1]
-                    : null;
+            const latestNotification = latestNotifications.length > 0 ? latestNotifications[latestNotifications.length - 1] : null;
+            // console.log('Love : ', latestNotification);
 
-            if (
-                latestNotification &&
-                latestNotification.locationStartTime !== lastResponseTime &&
-                userId !== lastResponseTime
-            ) {
-                showPushNotification(
-                    `New notification: ${latestNotification.sharedUsername}`
-                );
+            if (latestNotification && (latestNotification.locationStartTime !== lastResponseTime && userId !== lastResponseTime)) {
+                showPushNotification(`New notification: ${latestNotification.sharedUsername}`);
                 setLastResponseTime(latestNotification.locationStartTime);
                 setUserId(userId);
             }
-        });
+        })
     };
-
 
     const showPushNotification = async (message) => {
         await scheduleNotificationAsync({

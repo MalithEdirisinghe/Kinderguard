@@ -133,7 +133,10 @@ const HomeScreen = ({ navigation }) => {
         };
     }, [navigation]);
 
-    const socket = SocketIOClient('wss://kids-app.adaptable.app');
+    const socket = SocketIOClient("wss://kids-app.adaptable.app", {
+        reconnection: true,
+        reconnectionAttempts: 5,
+    });
 
 
     const sendLocationToAPI = (userId, username, latitude, longitude) => {
@@ -155,7 +158,9 @@ const HomeScreen = ({ navigation }) => {
         });
 
         socket.on('disconnect', () => {
+
             console.log('Disconnected from servers');
+            sendLocationToAPI();
         });
 
         socket.on('sendLocation', (data) => {
