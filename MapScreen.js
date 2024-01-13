@@ -14,6 +14,7 @@ import * as Location from 'expo-location';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth'; 
 import { doc, getDoc } from 'firebase/firestore';
+import { Base_url } from './common/baseUrl';
 
 const MapScreen = () => {
     const [location, setLocation] = useState(null);
@@ -81,7 +82,7 @@ const MapScreen = () => {
         setReporting(true);
         if (location) {
             console.log('Location: ', location);
-            const apiUrl = 'https://kids-app.adaptable.app/api/getUsers';
+            const apiUrl = Base_url+'/api/getUsers';
             const requestBody = {
                 userId: auth.currentUser.uid,
                 userUsername: username,

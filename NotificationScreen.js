@@ -4,6 +4,7 @@ import { auth } from './firebase';
 import { scheduleNotificationAsync } from 'expo-notifications';
 import SocketIOClient from 'socket.io-client'; 
 import axios from 'axios';
+import { Base_url } from './common/baseUrl';
 
 const NotificationScreen = () => {
     const [notifications, setNotifications] = useState([]);
@@ -48,7 +49,7 @@ const NotificationScreen = () => {
 
                         try {
                             // Make a PATCH request to the API endpoint
-                            const response = await axios.patch('https://kids-app.adaptable.app/api/updateIsActive', data);
+                            const response = await axios.patch(Base_url+'/api/updateIsActive', data);
 
                             // Check if the request was successful
                             if (response.status === 200) {

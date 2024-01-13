@@ -7,6 +7,7 @@ import { ref, uploadBytes, getStorage } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import 'firebase/storage';
+import { Base_url } from './common/baseUrl';
 
 export default function SignupScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -101,7 +102,7 @@ export default function SignupScreen({ navigation }) {
             };
 
             // Make a POST request to save the user's location
-            const apiUrl = 'https://kids-app.adaptable.app/api/saveUser';
+            const apiUrl = Base_url+'/api/saveUser';
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
